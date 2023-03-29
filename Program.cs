@@ -21,6 +21,7 @@ app.MapGet("/address/{id?}", AddressMethods.Read);
 app.MapPut("/address/update/{id}", AddressMethods.Update);
 //Address Delete
 app.MapDelete("/address/delete/{id}", AddressMethods.Delete);
-//
+//Address Details
 app.MapGet("/address/details/{id}", AddressMethods.Details);
+
 app.Run();
