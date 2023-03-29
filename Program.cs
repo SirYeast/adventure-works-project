@@ -23,21 +23,17 @@ app.MapPost("/SalesOrderHeader/Create", async (SalesOrderHeader salesOrderHeader
 });
 
 // Get all Products
-app.MapGet("/Product", (AdventureWorksLt2019Context context) =>
+app.MapGet("/Product", async (AdventureWorksLt2019Context context) =>
 {
-    List<Product> products = context.Products.ToList();
+    List<Product> products = await context.Products.ToListAsync();
     return Results.Ok(products);
 });
 
-// Get Product by primary key (ProductId)
-app.MapGet("/Product/productId", (int productId, AdventureWorksLt2019Context context) =>
+// Get Products by Id
+app.MapGet("/Product/{productId:int}", async (int productId, AdventureWorksLt2019Context context) =>
 {
-    Product product = context.Products.Find(productId);
-    if (product == null)
-    {
-        return Results.NotFound();
-    }
-    return Results.Ok(product);
+    Product products = await context.Products.FindAsync(productId);
+    return Results.Ok(products);
 });
 
 // Get all SalesOrderHeaders
@@ -47,12 +43,55 @@ app.MapGet("/SalesOrderHeader", (AdventureWorksLt2019Context context) =>
     return Results.Ok(salesOrderHeaders);
 });
 
-// Get SalesOrderHeader by primary key (SalesOrderId)
-app.MapGet("/SalesOrderHeader/salesOrderId", (int salesOrderId, AdventureWorksLt2019Context context) =>
+// Get SalesOrderHeaders by Id
+app.MapGet("/SalesOrderHeader/{salesOrderHeaderId:int}", async (int salesOrderHeaderId, AdventureWorksLt2019Context context) =>
 {
-    SalesOrderHeader salesOrderHeader = context.SalesOrderHeaders.Find(salesOrderId);
+    SalesOrderHeader salesOrderHeaders = await context.SalesOrderHeaders.FindAsync(salesOrderHeaderId);
+    return Results.Ok(salesOrderHeaders);
+});
+
+// Update Product by primary key (ProductId)
+app.MapPut("/Product/Update/{productId:int}", async (int productId, Product updatedProduct, AdventureWorksLt2019Context context) =>
+{
+    Product product = await context.Products.FindAsync(productId);
+    if (product == null) return Results.NotFound();
+
+    context.Entry(product).CurrentValues.SetValues(updatedProduct);
+    await context.SaveChangesAsync();
+
+    return Results.Ok(product);
+});
+
+// Update Product by primary key (ProductId)
+app.MapPut("/Product/Update/{productId:int}", async (int productId, Product updatedProduct, AdventureWorksLt2019Context context) =>
+{
+    Product product = await context.Products.FindAsync(productId);
+    if (product == null) return Results.NotFound();
+
+    // Tried using context.Entry(product).CurrentValues.SetValues(updatedProduct); But it would return me a 404 Not Found
+    product.Name = updatedProduct.Name;
+    product.Color = updatedProduct.Color;
+    product.StandardCost = updatedProduct.StandardCost;
+    product.ListPrice = updatedProduct.ListPrice;
+    product.Size = updatedProduct.Size;
+    product.Weight = updatedProduct.Weight;
+
+    await context.SaveChangesAsync();
+
+    return Results.Ok(product);
+});
+
+// Update SalesOrderHeader by primary key (SalesOrderId)
+app.MapPut("/SalesOrderHeader/Update/{salesOrderId:int}", async (int salesOrderId, SalesOrderHeader updatedSalesOrderHeader, AdventureWorksLt2019Context context) =>
+{
+    SalesOrderHeader salesOrderHeader = await context.SalesOrderHeaders.FindAsync(salesOrderId);
     if (salesOrderHeader == null) return Results.NotFound();
+
+    context.Entry(salesOrderHeader).CurrentValues.SetValues(updatedSalesOrderHeader);
+    await context.SaveChangesAsync();
+
     return Results.Ok(salesOrderHeader);
 });
+
 
 app.Run();
