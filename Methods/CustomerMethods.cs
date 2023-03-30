@@ -1,15 +1,9 @@
-﻿namespace adventure_works_project.Models;
+﻿using adventure_works_project.Models;
+
+namespace adventure_works_project.Methods;
 
 public static class CustomerMethods
 {
-    public static IResult GetCustomers(int? id, AdventureWorksLt2019Context db)
-    {
-        if (id == null)
-            return Results.Ok(db.Customers.ToList());
-
-        return Results.Ok(db.Customers.Find(id));
-    }
-
     public static IResult Create(Customer customer, AdventureWorksLt2019Context db)
     {
         customer.Rowguid = new Guid();
@@ -17,7 +11,15 @@ public static class CustomerMethods
 
         db.Customers.Add(customer);
         db.SaveChanges();
-        return Results.Created($"/customers/details/{customer.CustomerId}", customer);
+        return Results.Created($"/customer/created/{customer.CustomerId}", customer);
+    }
+
+    public static IResult GetCustomers(int? id, AdventureWorksLt2019Context db)
+    {
+        if (id == null)
+            return Results.Ok(db.Customers.ToList());
+
+        return Results.Ok(db.Customers.Find(id));
     }
 
     public static IResult Details(int? id, AdventureWorksLt2019Context db)
@@ -60,9 +62,9 @@ public static class CustomerMethods
 
             db.Customers.Add(inCustomer);
             db.SaveChanges();
-            return Results.Created($"/customers/details/{inCustomer.CustomerId}", new
+            return Results.Created($"/customer/created/{inCustomer.CustomerId}", new
             {
-                Message = "Customer did not exist in the database, successfully created new record.",
+                Message = "Customer did not exist, successfully created new record.",
                 Customer = inCustomer
             });
         }
@@ -79,7 +81,7 @@ public static class CustomerMethods
         customer.ModifiedDate = DateTime.Today;
 
         db.SaveChanges();
-        return Results.NoContent();
+        return Results.Ok(customer);
     }
 
     public static IResult Delete(int? id, AdventureWorksLt2019Context db)
