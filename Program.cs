@@ -6,6 +6,15 @@ builder.Services.AddDbContext<AdventureWorksLt2019Context>(options =>
     options.UseSqlServer("Data Source=localhost\\SQLEXPRESS;Database=AdventureWorksLT2019;Integrated Security=True;TrustServerCertificate=True"));
 var app = builder.Build();
 
+////Address Create
+//app.MapPost(@"/address/create", AddressMethods.Create);
+////Address Read
+//app.MapGet("/address/{id?}", AddressMethods.Read);
+////Address Update
+//app.MapPut("/address/update/{id}", AddressMethods.Update);
+////Address Delete
+//app.MapDelete("/address/delete/{id}", AddressMethods.Delete);
+
 /****** Products *******/
 
 // 201 Created
@@ -31,7 +40,8 @@ app.MapGet("/Product/{productId:int}", async (int productId, AdventureWorksLt201
     if (products == null)
     {
         return Results.NotFound();
-    } else
+    }
+    else
     {
         return Results.Ok(products);
     }
@@ -64,7 +74,8 @@ app.MapDelete("/Product/Delete/{productId:int}", async (int productId, Adventure
     {
         return Results.NotFound();
 
-    } else
+    }
+    else
     {
         // Update the foreign key reference in the SalesOrderDetail table
         foreach (SalesOrderDetail salesOrderDetail in product.SalesOrderDetails)
@@ -90,10 +101,10 @@ app.MapGet("/Product/Details/{productId:int}", async (int productId, AdventureWo
         .FirstOrDefaultAsync(p => p.ProductId == productId);
 
 
-    if (product == null) 
+    if (product == null)
     {
         return Results.NotFound();
-    } 
+    }
     else
     {
         var result = new
@@ -108,7 +119,7 @@ app.MapGet("/Product/Details/{productId:int}", async (int productId, AdventureWo
         return Results.Ok(result);
     }
 
-   
+
 });
 
 
@@ -137,7 +148,8 @@ app.MapGet("/SalesOrderHeader/{salesOrderId:int}", async (int salesOrderId, Adve
     if (salesOrderHeaders == null)
     {
         return Results.NotFound();
-    } else
+    }
+    else
     {
         return Results.Ok(salesOrderHeaders);
     }
@@ -168,7 +180,7 @@ app.MapDelete("/SalesOrderHeader/Delete/{salesOrderId:int}", async (int salesOrd
     if (salesOrderHeader == null)
     {
         return Results.NotFound();
-    } 
+    }
     else
     {
         context.SalesOrderHeaders.Remove(salesOrderHeader);
